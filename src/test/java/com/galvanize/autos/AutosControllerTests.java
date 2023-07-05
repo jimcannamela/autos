@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,7 +36,7 @@ public class AutosControllerTests {
 		for (int i = 0; i < 5; i++) {
 			automobiles.add(new Automobile(1966+i,"Chevrolet", "Camaro", "ABVC"+i));
 		}
-		when(autosService.getAllAutos()).thenReturn(new AutosList(automobiles));
+		when(autosService.getAutos()).thenReturn(new AutosList(automobiles));
 		// Execution
 		mockMvc.perform(get("/api/autos"))
 				.andDo(print())
@@ -48,7 +49,7 @@ public class AutosControllerTests {
 	@Test
 	void getListOfAllAutos_NoContent_Status204() throws Exception {
 		// Setup
-		when(autosService.getAllAutos()).thenReturn(new AutosList());
+		when(autosService.getAutos()).thenReturn(new AutosList());
 		// Execution
 		mockMvc.perform(get("/api/autos"))
 				.andDo(print())
@@ -56,9 +57,27 @@ public class AutosControllerTests {
 				.andExpect(status().isNoContent());
 	}
 
-		// ?color=yellow - return list of yellow cars - status 200
-		// ?make=chevrolet - return list of chevrolet cars - status 200
-		// ?make=yellow&make=chevrolet - return list of yellow chevrolet cars - status 200
+	// ?color=yellow - return list of yellow cars - status 200
+	// ?make=chevrolet - return list of chevrolet cars - status 200
+	// ?make=yellow&make=chevrolet - return list of yellow chevrolet cars - status 200
+	@Test
+	void searchForYellowAutos_ReturnAutosList_Status200() throws Exception {
+		// Setup
+		List<Automobile> automobiles = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			automobiles.add(new Automobile(1966+i,"Chevrolet", "Camaro", "ABVC"+i));
+		}
+		when(autosService.getAutos(anyString(), anyString())).thenReturn(new AutosList(automobiles));
+		// Execution
+		mockMvc.perform(get("/api/autos?color=Yellow&make=Chevrolet"))
+				.andDo(print())
+				// Assertions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.automobiles", hasSize(5)));
+	}
+
+
+
 		// ?color=black - return not found - status 204 ( we don't carry non GM products )
 		// ?make=ford - return not found - status 204 ( we don't carry non GM products )
 		// ?make=black&make=ford - return not found - status 204 ( we don't carry non GM products )
