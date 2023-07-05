@@ -92,7 +92,21 @@ public class AutosControllerTests {
 				.andExpect(jsonPath("$.automobiles", hasSize(5)));
 	}
 	// ?make=chevrolet - return list of chevrolet cars - status 200
-
+	@Test
+	void searchForChevrolets_ReturnAutosList_Status200() throws Exception {
+		// Setup
+		List<Automobile> automobiles = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			automobiles.add(new Automobile(1966+i,"Chevrolet", "Camaro", "ABVC"+i));
+		}
+		when(autosService.getAutos(anyString())).thenReturn(new AutosList(automobiles));
+		// Execution
+		mockMvc.perform(get("/api/autos?make=Chevrolet"))
+				.andDo(print())
+				// Assertions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.automobiles", hasSize(5)));
+	}
 
 		// ?color=black - return not found - status 204 ( we don't carry non GM products )
 		// ?make=ford - return not found - status 204 ( we don't carry non GM products )

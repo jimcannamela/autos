@@ -17,8 +17,8 @@ public class AutosController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<AutosList> getAutos(@RequestParam(value="color", required = false) String color,
-											  @RequestParam(value="make", required = false) String make){
+	public ResponseEntity<AutosList> getAutos(@RequestParam(required = false) String color,
+											  @RequestParam(required = false) String make){
 		AutosList autosList;
 		if (color == null && make == null) {
 			autosList = autosService.getAutos();
