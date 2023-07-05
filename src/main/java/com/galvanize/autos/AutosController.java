@@ -17,14 +17,19 @@ public class AutosController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<AutosList> getAutos(@RequestParam(required = false) String color,
-											  @RequestParam(required = false) String make){
+	public ResponseEntity<AutosList> getAutos(@RequestParam(value="color", required = false) String color,
+											  @RequestParam(value="make", required = false) String make){
 		AutosList autosList;
 		if (color == null && make == null) {
 			autosList = autosService.getAutos();
+		} else if (make == null) {
+			autosList = autosService.getAutos(color);
+		} else if (color == null) {
+			autosList = autosService.getAutos(make);
 		} else {
 			autosList = autosService.getAutos(color, make);
 		}
+
 		return autosList.isEmpty() ? ResponseEntity.noContent().build() :
 				ResponseEntity.ok(autosList);
 	}

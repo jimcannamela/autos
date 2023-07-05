@@ -57,11 +57,10 @@ public class AutosControllerTests {
 				.andExpect(status().isNoContent());
 	}
 
-	// ?color=yellow - return list of yellow cars - status 200
-	// ?make=chevrolet - return list of chevrolet cars - status 200
+
 	// ?make=yellow&make=chevrolet - return list of yellow chevrolet cars - status 200
 	@Test
-	void searchForYellowAutos_ReturnAutosList_Status200() throws Exception {
+	void searchForYellowChevrolets_ReturnAutosList_Status200() throws Exception {
 		// Setup
 		List<Automobile> automobiles = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
@@ -76,6 +75,23 @@ public class AutosControllerTests {
 				.andExpect(jsonPath("$.automobiles", hasSize(5)));
 	}
 
+	// ?color=yellow - return list of yellow cars - status 200
+	@Test
+	void searchForYellow_ReturnAutosList_Status200() throws Exception {
+		// Setup
+		List<Automobile> automobiles = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			automobiles.add(new Automobile(1966+i,"Chevrolet", "Camaro", "ABVC"+i));
+		}
+		when(autosService.getAutos(anyString())).thenReturn(new AutosList(automobiles));
+		// Execution
+		mockMvc.perform(get("/api/autos?color=Yellow"))
+				.andDo(print())
+				// Assertions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.automobiles", hasSize(5)));
+	}
+	// ?make=chevrolet - return list of chevrolet cars - status 200
 
 
 		// ?color=black - return not found - status 204 ( we don't carry non GM products )
