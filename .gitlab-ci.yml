@@ -1,0 +1,28 @@
+image: openjdk:11
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  only:
+    refs:
+      - merge_requests
+      - master
+  script:
+    - ./gradlew assemble
+  artifacts:
+    paths:
+      - build/libs/*.jar
+test:
+  stage: test
+  only:
+    refs:
+      - merge_requests
+      - master
+  script:
+    ./gradlew test
+  artifacts:
+    paths:
+      - build/test-results/test/TEST*.xml
