@@ -14,8 +14,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -222,14 +221,33 @@ public class AutosControllerTests {
 				.andExpect(jsonPath("owner").value("People Eater"));
 
 	}
-		// Auto not found - return message "Auto not found" - status 204
-
+		// Auto not found - return message "Auto not found" - status 404
+		@Test
+		void updateAuto_NotFound_Status404() throws Exception {
+			// Setup
+			doThrow(new AutoNotFoundException()).when(autosService).updateAuto(anyString(), anyString(), anyString());
+			// Execution
+			mockMvc.perform(patch("/api/autos/ABVC123")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content("{\"color\":\"Purple\",\"owner\":\"People Eater\"}"))
+					// Assertions
+					.andExpect(status().isNotFound());
+		}
+	// Auto update - bad request - status 400
+	@Test
+	void updateAuto_BadRequest_Status400() throws Exception {
+		// Setup
+		doThrow(new AutoNotFoundException()).when(autosService).updateAuto(anyString(), anyString(), anyString());
+		// Execution
+		mockMvc.perform(patch("/api/autos/ABVC123"))
+				// Assertions
+				.andExpect(status().isBadRequest());
+	}
 	// DELETE: /api/autos/{vin}
 		// Auto successfully deleted - status 202
 	@Test
-	void deleteAuto_withVin_Status202 () throws Exception {
-//		Automobile automobile = new Automobile(1967,"Chevrolet", "Camaro", "ABVC1");
-//		when(autosService.deleteAuto(anyString())).thenReturn(automobile);
+	void deleteAuto_withVin_Status202() throws Exception {
+		// Setup
 		// Execution
 		mockMvc.perform(delete("/api/autos/ABVC123"))
 				.andDo(print())
@@ -238,5 +256,15 @@ public class AutosControllerTests {
 		verify(autosService).deleteAuto(anyString());
 	}
 		// Auto not found - return message "Auto not found" - status 204
+	@Test
+	void deleteAuto_NotFound_Status204() throws Exception {
+		// Setup
+		doThrow(new AutoNotFoundException()).when(autosService).deleteAuto(anyString());
+		// Execution
+		mockMvc.perform(delete("/api/autos/ABVC123"))
+				// Assertions
+				.andExpect(status().isNoContent());
+	}
+
 
 }
