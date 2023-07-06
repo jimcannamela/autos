@@ -53,7 +53,7 @@ public class AutosControllerTests {
 		// Execution
 		mockMvc.perform(get("/api/autos"))
 				.andDo(print())
-				// Assertions
+		// Assertions
 				.andExpect(status().isNoContent());
 	}
 
@@ -70,7 +70,7 @@ public class AutosControllerTests {
 		// Execution
 		mockMvc.perform(get("/api/autos?color=Yellow&make=Chevrolet"))
 				.andDo(print())
-				// Assertions
+		// Assertions
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.automobiles", hasSize(5)));
 	}
@@ -83,11 +83,11 @@ public class AutosControllerTests {
 		for (int i = 0; i < 5; i++) {
 			automobiles.add(new Automobile(1966+i,"Chevrolet", "Camaro", "ABVC"+i));
 		}
-		when(autosService.getAutos(anyString())).thenReturn(new AutosList(automobiles));
+		when(autosService.getAutosWithColor(anyString())).thenReturn(new AutosList(automobiles));
 		// Execution
 		mockMvc.perform(get("/api/autos?color=Yellow"))
 				.andDo(print())
-				// Assertions
+		// Assertions
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.automobiles", hasSize(5)));
 	}
@@ -99,11 +99,11 @@ public class AutosControllerTests {
 		for (int i = 0; i < 5; i++) {
 			automobiles.add(new Automobile(1966+i,"Chevrolet", "Camaro", "ABVC"+i));
 		}
-		when(autosService.getAutos(anyString())).thenReturn(new AutosList(automobiles));
+		when(autosService.getAutosWithMake(anyString())).thenReturn(new AutosList(automobiles));
 		// Execution
 		mockMvc.perform(get("/api/autos?make=Chevrolet"))
 				.andDo(print())
-				// Assertions
+		// Assertions
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.automobiles", hasSize(5)));
 	}
@@ -112,36 +112,33 @@ public class AutosControllerTests {
 		@Test
 		void searchForBlack_ReturnNoContent_Status204() throws Exception {
 			// Setup
-			// Setup
-			when(autosService.getAutos()).thenReturn(new AutosList());
+			when(autosService.getAutosWithColor(anyString())).thenReturn(new AutosList());
 			// Execution
-			mockMvc.perform(get("/api/autos"))
+			mockMvc.perform(get("/api/autos?color=Black"))
 					.andDo(print())
-					// Assertions
+			// Assertions
 					.andExpect(status().isNoContent());
 		}
 		// ?make=ford - return not found - status 204 ( we don't carry non GM products )
 		@Test
 		void searchForFord_ReturnNoContent_Status204() throws Exception {
 			// Setup
-			// Setup
-			when(autosService.getAutos()).thenReturn(new AutosList());
+			when(autosService.getAutosWithMake(anyString())).thenReturn(new AutosList());
 			// Execution
-			mockMvc.perform(get("/api/autos"))
+			mockMvc.perform(get("/api/autos?make=Ford"))
 					.andDo(print())
-					// Assertions
+			// Assertions
 					.andExpect(status().isNoContent());
 		}
 		// ?make=black&make=ford - return not found - status 204 ( we don't carry non GM products )
 		@Test
 		void searchForBlackFord_ReturnNoContent_Status204() throws Exception {
 			// Setup
-			// Setup
-			when(autosService.getAutos()).thenReturn(new AutosList());
+			when(autosService.getAutos(anyString(), anyString())).thenReturn(new AutosList());
 			// Execution
-			mockMvc.perform(get("/api/autos"))
+			mockMvc.perform(get("/api/autos?color=Black&make=Ford"))
 					.andDo(print())
-					// Assertions
+			// Assertions
 					.andExpect(status().isNoContent());
 		}
 		// ?model=mustang - return bad request - status 400
