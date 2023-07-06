@@ -36,13 +36,22 @@ public class AutosController {
 	public ResponseEntity<Automobile> getAutoByVin(@PathVariable String vin){
 		Automobile automobile;
 		automobile = autosService.getAuto(vin);
-		return automobile==null ? ResponseEntity.noContent().build() :
+		return automobile == null ? ResponseEntity.noContent().build() :
 				ResponseEntity.ok(automobile);
 	};
 
 	@PostMapping("")
 	public Automobile addAuto(@RequestBody Automobile automobile) {
 		return autosService.addAuto(automobile);
+	}
+
+	@PatchMapping("{vin}")
+	public Automobile updateAuto(@PathVariable String vin,
+								 @RequestBody UpdateOwnerRequest update) {
+		Automobile automobile = autosService.updateAuto(vin, update.getColor(), update.getOwner());
+		automobile.setColor(update.getColor());
+		automobile.setOwner(update.getOwner());
+		return automobile;
 	}
 
 	@ExceptionHandler

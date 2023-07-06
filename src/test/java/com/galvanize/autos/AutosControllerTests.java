@@ -15,8 +15,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -156,7 +155,8 @@ public class AutosControllerTests {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "AABBCC");
 		when(autosService.addAuto(any(Automobile.class))).thenReturn(automobile);
 		// Execution
-		mockMvc.perform(post("/api/autos").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post("/api/autos")
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(automobile)))
 				.andDo(print())
 		// Assertions
@@ -170,8 +170,9 @@ public class AutosControllerTests {
 		String json = "{\"year\":1966,\"make\":\"Chevrolet\",\"model\":\"Camaro\",\"color\":null,\"owner\":null,\"vin\":\"ABVC0\"}";
 		when(autosService.addAuto(any(Automobile.class))).thenThrow(InvalidAutoException.class);
 		// Execution
-		mockMvc.perform(post("/api/autos").contentType(MediaType.APPLICATION_JSON)
-						.content(json))
+		mockMvc.perform(post("/api/autos")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json))
 				.andDo(print())
 				// Assertions
 				.andExpect(status().isBadRequest());
@@ -205,10 +206,35 @@ public class AutosControllerTests {
 	}
 	// PATCH: /api/autos/{vin}
 		// Auto successfully updated - return updated auto, and message - status 200
+	@Test
+	void updateAuto_withObject_returnAuto_Status200 () throws Exception {
+		Automobile automobile = new Automobile(1967,"Chevrolet", "Camaro", "ABVC1");
+		when(autosService.updateAuto(anyString(), anyString(), anyString())).thenReturn(automobile);
+		// Execution
+		mockMvc.perform(patch("/api/autos/"+automobile.getVin())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"color\":\"Purple\",\"owner\":\"People Eater\"}"))
+				.andDo(print())
+		// Assertions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("color").value("Purple"))
+				.andExpect(jsonPath("owner").value("People Eater"));
+
+	}
 		// Auto not found - return message "Auto not found" - status 204
 
 	// DELETE: /api/autos/{vin}
 		// Auto successfully deleted - status 202
+//	@Test
+//	void deleteAuto_withVin_Status202 () throws Exception {
+//		Automobile automobile = new Automobile(1967,"Chevrolet", "Camaro", "ABVC1");
+//		when(autosService.deleteAuto(anyString())).thenReturn(automobile);
+//		// Execution
+//		mockMvc.perform(delete("/api/autos/"+automobile.getVin()))
+//				.andDo(print())
+//		// Assertions
+//				.andExpect(status().isAccepted());
+//	}
 		// Auto not found - return message "Auto not found" - status 204
 
 }
