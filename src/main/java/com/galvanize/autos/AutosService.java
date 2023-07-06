@@ -25,4 +25,8 @@ public class AutosService {
 		return null;
 	}
 
+	public Automobile getAuto(String vin) {
+		return null;
+	}
+
 }

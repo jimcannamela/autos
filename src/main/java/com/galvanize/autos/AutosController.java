@@ -32,6 +32,14 @@ public class AutosController {
 				ResponseEntity.ok(autosList);
 	}
 
+	@GetMapping("{vin}")
+	public ResponseEntity<Automobile> getAutoByVin(@PathVariable String vin){
+		Automobile automobile;
+		automobile = autosService.getAuto(vin);
+		return automobile==null ? ResponseEntity.noContent().build() :
+				ResponseEntity.ok(automobile);
+	};
+
 	@PostMapping("")
 	public Automobile addAuto(@RequestBody Automobile automobile) {
 		return autosService.addAuto(automobile);

@@ -164,22 +164,45 @@ public class AutosControllerTests {
 				.andExpect(jsonPath("make").value("Chevrolet"));
 	}
 		// Duplicate auto information - return "Automobile already exists in database - status
-		@Test
-		void addAuto_badRequest_returns400() throws Exception{
-			// Setup
-			String json = "{\"year\":1966,\"make\":\"Chevrolet\",\"model\":\"Camaro\",\"color\":null,\"owner\":null,\"vin\":\"ABVC0\"}";
-			when(autosService.addAuto(any(Automobile.class))).thenThrow(InvalidAutoException.class);
-			// Execution
-			mockMvc.perform(post("/api/autos").contentType(MediaType.APPLICATION_JSON)
-							.content(json))
-					.andDo(print())
-					// Assertions
-					.andExpect(status().isBadRequest());
-		}
+	@Test
+	void addAuto_badRequest_returns400() throws Exception{
+		// Setup
+		String json = "{\"year\":1966,\"make\":\"Chevrolet\",\"model\":\"Camaro\",\"color\":null,\"owner\":null,\"vin\":\"ABVC0\"}";
+		when(autosService.addAuto(any(Automobile.class))).thenThrow(InvalidAutoException.class);
+		// Execution
+		mockMvc.perform(post("/api/autos").contentType(MediaType.APPLICATION_JSON)
+						.content(json))
+				.andDo(print())
+				// Assertions
+				.andExpect(status().isBadRequest());
+	}
 	// GET: /api/autos/{vin}
 		// Auto information returned - status 200
-		// Auto not found - return message "Auto not found" - status 204
+	@Test
+	void getAutoByVin_returnsAuto_status200() throws Exception{
+		// Setup
+		Automobile automobile = new Automobile(1967,"Chevrolet", "Camaro", "ABVC1");
+		when(autosService.getAuto(anyString())).thenReturn(automobile);
+		// Execution
+		mockMvc.perform(get("/api/autos/"+automobile.getVin()))
+				.andDo(print())
+		// Assertions
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("year").value(1967));
 
+
+	}
+		// Auto not found - return message "Auto not found" - status 204
+	@Test
+	void getAutoByVin_NotFound_Status204() throws Exception {
+		// Setup
+		when(autosService.getAuto(anyString())).thenReturn(null);
+		// Execution
+		mockMvc.perform(get("/api/autos/ABVC9"))
+				.andDo(print())
+		// Assertions
+				.andExpect(status().isNoContent());
+	}
 	// PATCH: /api/autos/{vin}
 		// Auto successfully updated - return updated auto, and message - status 200
 		// Auto not found - return message "Auto not found" - status 204
