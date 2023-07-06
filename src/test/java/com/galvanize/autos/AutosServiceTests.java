@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +54,14 @@ class AutosServiceTests {
 	}
 
 	@Test
-	void addAuto() {
+	void addAuto_valid_returnsAuto() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.save(any(Automobile.class)))
+				.thenReturn((automobile));
+		Automobile automobile1 = autosService.addAuto(automobile);
+		assertThat(automobile).isNotNull();
+		assertThat(automobile.getMake()).isEqualTo("Chevrolet");
 	}
 
 	@Test
