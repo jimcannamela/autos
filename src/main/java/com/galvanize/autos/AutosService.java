@@ -17,7 +17,11 @@ public class AutosService {
 		// Query select * from autos
 		// Put that in a list
 		// Return a new AutosList with the list
-		return new AutosList(autosRepository.findAll());
+		List<Automobile> automobiles = autosRepository.findAll();
+		if (!automobiles.isEmpty()) {
+			return new AutosList(automobiles);
+		}
+		return null;
 	}
 
 	public AutosList getAutos(String color, String make) {

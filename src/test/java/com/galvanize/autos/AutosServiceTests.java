@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -26,8 +27,9 @@ class AutosServiceTests {
 		autosService = new AutosService(autosRepository);
 	}
 
+	// Get list of all autos - autos exist in repository - return list
 	@Test
-	void getAutos() {
+	void getAutos_returnList() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
 		when(autosRepository.findAll()).thenReturn(Arrays.asList(automobile));
 		AutosList autosList = autosService.getAutos();
@@ -35,9 +37,17 @@ class AutosServiceTests {
 		assertThat(autosList.isEmpty()).isFalse();
 	}
 
+	// Get list of all autos - no autos in repository - return null - display error
+	@Test
+	void getAutos_returnNull() {
+		when(autosRepository.findAll()).thenReturn(Arrays.asList());
+		AutosList autosList = autosService.getAutos();
+		assertThat(autosList).isNull();
+	}
 	@Test
 	void getAutos_search_returnsList() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
 		when(autosRepository.findByColorContainsAndMakeContains(anyString(), anyString()))
 				.thenReturn(Arrays.asList(automobile));
 		AutosList autosList = autosService.getAutos("Yellow", "Chevrolet");
