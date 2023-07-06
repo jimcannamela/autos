@@ -109,8 +109,41 @@ public class AutosControllerTests {
 	}
 
 		// ?color=black - return not found - status 204 ( we don't carry non GM products )
+		@Test
+		void searchForBlack_ReturnNoContent_Status204() throws Exception {
+			// Setup
+			// Setup
+			when(autosService.getAutos()).thenReturn(new AutosList());
+			// Execution
+			mockMvc.perform(get("/api/autos"))
+					.andDo(print())
+					// Assertions
+					.andExpect(status().isNoContent());
+		}
 		// ?make=ford - return not found - status 204 ( we don't carry non GM products )
+		@Test
+		void searchForFord_ReturnNoContent_Status204() throws Exception {
+			// Setup
+			// Setup
+			when(autosService.getAutos()).thenReturn(new AutosList());
+			// Execution
+			mockMvc.perform(get("/api/autos"))
+					.andDo(print())
+					// Assertions
+					.andExpect(status().isNoContent());
+		}
 		// ?make=black&make=ford - return not found - status 204 ( we don't carry non GM products )
+		@Test
+		void searchForBlackFord_ReturnNoContent_Status204() throws Exception {
+			// Setup
+			// Setup
+			when(autosService.getAutos()).thenReturn(new AutosList());
+			// Execution
+			mockMvc.perform(get("/api/autos"))
+					.andDo(print())
+					// Assertions
+					.andExpect(status().isNoContent());
+		}
 		// ?model=mustang - return bad request - status 400
 
 	// POST: /api/autos
