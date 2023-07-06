@@ -14,6 +14,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -225,16 +226,17 @@ public class AutosControllerTests {
 
 	// DELETE: /api/autos/{vin}
 		// Auto successfully deleted - status 202
-//	@Test
-//	void deleteAuto_withVin_Status202 () throws Exception {
+	@Test
+	void deleteAuto_withVin_Status202 () throws Exception {
 //		Automobile automobile = new Automobile(1967,"Chevrolet", "Camaro", "ABVC1");
 //		when(autosService.deleteAuto(anyString())).thenReturn(automobile);
-//		// Execution
-//		mockMvc.perform(delete("/api/autos/"+automobile.getVin()))
-//				.andDo(print())
-//		// Assertions
-//				.andExpect(status().isAccepted());
-//	}
+		// Execution
+		mockMvc.perform(delete("/api/autos/ABVC123"))
+				.andDo(print())
+		// Assertions
+				.andExpect(status().isAccepted());
+		verify(autosService).deleteAuto(anyString());
+	}
 		// Auto not found - return message "Auto not found" - status 204
 
 }
