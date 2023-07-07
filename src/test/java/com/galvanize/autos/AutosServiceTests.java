@@ -105,8 +105,25 @@ class AutosServiceTests {
 		assertThat(automobile1.getVin()).isEqualTo(automobile.getVin());
 	}
 
+//	@Test
+//	void getAuto_withVin_notFound_returnsNull() {
+//		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+//		when(autosRepository.findByVin(anyString()))
+//				.thenReturn(Optional.of(null));
+//		Automobile automobile1 = autosService.getAuto("FRED");
+//		assertThat(automobile1).isNull();
+//	}
 	@Test
 	void updateAuto() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.findByVin(anyString()))
+				.thenReturn(Optional.of(automobile));
+		when(autosRepository.save(any(Automobile.class))).thenReturn(automobile);
+		Automobile automobile1 = autosService.updateAuto(automobile.getVin(),"Purple", "People Eater");
+		assertThat(automobile1).isNotNull();
+		assertThat(automobile1.getColor()).isEqualTo("Purple");
+		assertThat(automobile1.getOwner()).isEqualTo("People Eater");
 	}
 
 	@Test
