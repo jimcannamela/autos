@@ -11,8 +11,10 @@ import java.util.Optional;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -117,8 +119,7 @@ class AutosServiceTests {
 	void updateAuto() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
 		automobile.setColor("Yellow");
-		when(autosRepository.findByVin(anyString()))
-				.thenReturn(Optional.of(automobile));
+		when(autosRepository.findByVin(anyString())).thenReturn(Optional.of(automobile));
 		when(autosRepository.save(any(Automobile.class))).thenReturn(automobile);
 		Automobile automobile1 = autosService.updateAuto(automobile.getVin(),"Purple", "People Eater");
 		assertThat(automobile1).isNotNull();
@@ -127,6 +128,25 @@ class AutosServiceTests {
 	}
 
 	@Test
-	void deleteAuto() {
+	void deleteAuto_byVin() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.findByVin(anyString())).thenReturn(Optional.of(automobile));
+
+		autosService.deleteAuto(automobile.getVin());
+
+		verify(autosRepository).delete(any(Automobile.class));
+	}
+
+	@Test
+	void deleteAuto_byVin_notExists() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.findByVin(anyString())).thenReturn(Optional.empty());
+
+		assertThatExceptionOfType(AutoNotFoundException.class)
+				.isThrownBy(() -> {
+			autosService.deleteAuto("AUTO DOES NOT EXIST");
+		});
 	}
 }
