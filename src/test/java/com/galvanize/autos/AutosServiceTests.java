@@ -51,7 +51,7 @@ class AutosServiceTests {
 	void getAutos_search_returnsList() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
 		automobile.setColor("Yellow");
-		when(autosRepository.findByColorContainsAndMakeContains(anyString(), anyString()))
+		when(autosRepository.findByColorAndMake(anyString(), anyString()))
 				.thenReturn(Arrays.asList(automobile));
 		AutosList autosList = autosService.getAutos("Yellow", "Chevrolet");
 		assertThat(autosList).isNotNull();
@@ -60,7 +60,7 @@ class AutosServiceTests {
 
 	@Test
 	void getAutos_search_notFound_returnNull() {
-		when(autosRepository.findByColorContainsAndMakeContains(anyString(), anyString()))
+		when(autosRepository.findByColorAndMake(anyString(), anyString()))
 				.thenReturn(Arrays.asList());
 		AutosList autosList = autosService.getAutos("Yellow", "Chevrolet");
 		assertThat(autosList).isNull();
@@ -68,10 +68,21 @@ class AutosServiceTests {
 
 	@Test
 	void getAutosWithColor() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.findByColor(anyString())).thenReturn(Arrays.asList(automobile));
+		AutosList autosList = autosService.getAutosWithColor("Yellow");
+		assertThat(autosList).isNotNull();
+		assertThat(autosList.isEmpty()).isFalse();
 	}
 
 	@Test
 	void getAutosWithMake() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		when(autosRepository.findByMake(anyString())).thenReturn(Arrays.asList(automobile));
+		AutosList autosList = autosService.getAutosWithMake("Chevrolet");
+		assertThat(autosList).isNotNull();
+		assertThat(autosList.isEmpty()).isFalse();
 	}
 
 	@Test
