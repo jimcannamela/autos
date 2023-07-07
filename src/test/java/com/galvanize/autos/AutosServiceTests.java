@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -56,6 +57,14 @@ class AutosServiceTests {
 	}
 
 	@Test
+	void getAutos_search_notFound_returnNull() {
+		when(autosRepository.findByColorContainsAndMakeContains(anyString(), anyString()))
+				.thenReturn(Arrays.asList());
+		AutosList autosList = autosService.getAutos("Yellow", "Chevrolet");
+		assertThat(autosList).isNull();
+	}
+
+	@Test
 	void getAutosWithColor() {
 	}
 
@@ -75,7 +84,25 @@ class AutosServiceTests {
 	}
 
 	@Test
-	void getAuto() {
+	void addAuto_badRequest_returnsError() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.save(any(Automobile.class)))
+				.thenReturn((automobile));
+		Automobile automobile1 = autosService.addAuto(automobile);
+		assertThat(automobile).isNotNull();
+		assertThat(automobile.getMake()).isEqualTo("Chevrolet");
+	}
+
+	@Test
+	void getAuto_withVin_valid_returnsAuto() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.findByVin(anyString()))
+				.thenReturn(Optional.of(automobile));
+		Automobile automobile1 = autosService.getAuto("CAM1966");
+		assertThat(automobile1).isNotNull();
+		assertThat(automobile1.getVin()).isEqualTo(automobile.getVin());
 	}
 
 	@Test
