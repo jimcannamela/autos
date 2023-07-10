@@ -10,8 +10,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -51,7 +50,7 @@ class AutosServiceTests {
 	void getAutos_search_returnsList() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
 		automobile.setColor("Yellow");
-		when(autosRepository.findByColorContainsAndMakeContains(anyString(), anyString()))
+		when(autosRepository.findByColorAndMake(anyString(), anyString()))
 				.thenReturn(Arrays.asList(automobile));
 		AutosList autosList = autosService.getAutos("Yellow", "Chevrolet");
 		assertThat(autosList).isNotNull();
@@ -60,7 +59,7 @@ class AutosServiceTests {
 
 	@Test
 	void getAutos_search_notFound_returnNull() {
-		when(autosRepository.findByColorContainsAndMakeContains(anyString(), anyString()))
+		when(autosRepository.findByColorAndMake(anyString(), anyString()))
 				.thenReturn(Arrays.asList());
 		AutosList autosList = autosService.getAutos("Yellow", "Chevrolet");
 		assertThat(autosList).isNull();
@@ -68,12 +67,36 @@ class AutosServiceTests {
 
 	@Test
 	void getAutosWithColor() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		automobile.setColor("Yellow");
+		when(autosRepository.findByColor(anyString())).thenReturn(Arrays.asList(automobile));
+		AutosList autosList = autosService.getAutosWithColor("Yellow");
+		assertThat(autosList).isNotNull();
+		assertThat(autosList.isEmpty()).isFalse();
 	}
 
 	@Test
-	void getAutosWithMake() {
+	void getAutosWithColor_notFound_returnNull() {
+		when(autosRepository.findByColor(anyString()))
+				.thenReturn(Arrays.asList());
+		AutosList autosList = autosService.getAutosWithColor("Black");
+		assertThat(autosList).isNull();
 	}
-
+	@Test
+	void getAutosWithMake() {
+		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
+		when(autosRepository.findByMake(anyString())).thenReturn(Arrays.asList(automobile));
+		AutosList autosList = autosService.getAutosWithMake("Chevrolet");
+		assertThat(autosList).isNotNull();
+		assertThat(autosList.isEmpty()).isFalse();
+	}
+	@Test
+	void getAutosWithMake_notFound_returnNull() {
+		when(autosRepository.findByMake(anyString()))
+				.thenReturn(Arrays.asList());
+		AutosList autosList = autosService.getAutosWithMake("Ford");
+		assertThat(autosList).isNull();
+	}
 	@Test
 	void addAuto_valid_returnsAuto() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
@@ -107,14 +130,13 @@ class AutosServiceTests {
 		assertThat(automobile1.getVin()).isEqualTo(automobile.getVin());
 	}
 
-//	@Test
-//	void getAuto_withVin_notFound_returnsNull() {
-//		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
-//		when(autosRepository.findByVin(anyString()))
-//				.thenReturn(Optional.of(null));
-//		Automobile automobile1 = autosService.getAuto("FRED");
-//		assertThat(automobile1).isNull();
-//	}
+	@Test
+	void getAuto_withVin_notFound_returnsNull() {
+		when(autosRepository.findByVin(anyString()))
+				.thenThrow(AutoNotFoundException.class);
+		assertThatThrownBy(() -> autosService.getAuto(anyString())).isInstanceOf(AutoNotFoundException.class);
+	}
+
 	@Test
 	void updateAuto() {
 		Automobile automobile = new Automobile(1966, "Chevrolet", "Camaro", "CAM1966" );
@@ -126,6 +148,28 @@ class AutosServiceTests {
 		assertThat(automobile1.getColor()).isEqualTo("Purple");
 		assertThat(automobile1.getOwner()).isEqualTo("People Eater");
 	}
+	@Test
+	void updateAuto_VinDoesNotExist_ThrowsAutoNotFoundException() {
+		when(autosRepository.findByVin(anyString())).thenReturn(null);
+
+		assertThatThrownBy(() -> autosService.updateAuto("CAM1966", "Purple", "People Eater")).isInstanceOf(AutoNotFoundException.class);
+	}
+
+	@Test
+	void updateAuto_NoVIN_ThrowsInvalidAutoException() {
+		assertThatThrownBy(() -> autosService.updateAuto(null, "Purple", "People Eater")).isInstanceOf(InvalidAutoException.class);
+	}
+
+	@Test
+	void updateAuto_NoColorOrOwner_ThrowsInvalidAutoException() {
+		assertThatThrownBy(() -> autosService.updateAuto("CAM1966", null, null)).isInstanceOf(InvalidAutoException.class);
+	}
+
+	@Test
+	void updateAuto_NoVinOrColorOrOwner_ThrowsInvalidAutoException() {
+		assertThatThrownBy(() -> autosService.updateAuto(null, null, null)).isInstanceOf(InvalidAutoException.class);
+	}
+
 
 	@Test
 	void deleteAuto_byVin() {

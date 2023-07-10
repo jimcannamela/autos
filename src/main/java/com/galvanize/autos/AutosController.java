@@ -41,8 +41,15 @@ public class AutosController {
 	};
 
 	@PostMapping("")
-	public Automobile addAuto(@RequestBody Automobile automobile) {
-		return autosService.addAuto(automobile);
+	public ResponseEntity<Automobile> addAuto(@RequestBody Automobile newAutomobile) {
+		Automobile automobileToAdd = autosService.addAuto(newAutomobile);
+		if (newAutomobile != null) {
+			return ResponseEntity.ok(automobileToAdd);
+			//	The following code does the same thing.
+			//	return ResponseEntity.status(200).body(automobileToAdd);
+		} else {
+			return ResponseEntity.badRequest().body(automobileToAdd);
+		}
 	}
 
 	@PatchMapping("{vin}")
