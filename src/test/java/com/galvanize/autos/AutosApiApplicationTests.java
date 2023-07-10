@@ -207,32 +207,105 @@ class AutosApiApplicationTests {
 	//
 
 	// Test for no autos in inventory
+//	@Test
+//	void getAutos_noAutosInInventory_returns404 (){
+//		// Set up
+//		autosRepository.deleteAll();
+//		System.out.println("Deleted all autos");
+//		// Execution
+//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity( "/api/autos", AutosList.class);
+//		System.out.println("Performed the call");
+//		// Assertions
+//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//		assertThat(response.getBody()).isNull();
+//		assertThat(response.getBody().isEmpty()).isTrue();
+//	}
+//	// Test for no autos returned by search for color and make
+//	@Test
+//	void getAutosByColorAndMake_noMatches_returnsNotFound() {
+//		// Set up
+//		String color = "Magenta";
+//		String make = "Ford";
+//
+//		// Execution
+//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
+//				String.format("/api/autos?color=%s&make=%s", color, make), AutosList.class);
+//
+//		// Assertions
+//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//		assertThat(response.getBody().isEmpty()).isTrue();
+//	}
+//	// Test for no autos returned by search for color
+//	@Test
+//	void getAutosByColor_noMatches_returnsNotFound() {
+//		// Set up
+//		String color = "Magenta";
+//
+//		// Execution
+//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
+//				String.format("/api/autos?color=%s", color), AutosList.class);
+//
+//		// Assertions
+//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//		assertThat(response.getBody().isEmpty()).isTrue();
+//	}
+	// Test for no autos returned by search for make
+//	@Test
+//	void getAutosByMake_noMatches_returnsNotFound() {
+//		// Set up
+//		String make = "Ford";
+//
+//		// Execution
+//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
+//				String.format("/api/autos?make=%s", make), AutosList.class);
+//
+//		// Assertions
+//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//		assertThat(response.getBody().isEmpty()).isTrue();
+//	}
+	// Test for no auto found by search by vin
 	@Test
-	void getAutos_noAutosInInventory_returns404 (){
+	void getAutosByVin_noMatches_returnsNoContent() {
 		// Set up
-		autosRepository.deleteAll();
+		String vin = "ZIPPYDODA";
+
 		// Execution
-		ResponseEntity<AutosList> response = testRestTemplate.getForEntity( "/api/autos", AutosList.class);
+		ResponseEntity<Automobile> response = testRestTemplate.getForEntity(
+				String.format("/api/autos/%s", vin), Automobile.class);
 
 		// Assertions
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 		assertThat(response.getBody()).isNull();
-		assertThat(response.getBody().isEmpty()).isTrue();
 	}
-	// Test for no autos returned by search for color and make
-
-	// Test for no autos returned by search for color
-
-	// Test for no autos returned by search for make
-
-	// Test for no auto found by search by vin
-
 	// Test for bad request on add
+//	@Test
+//	void addAutoBad_returnsBadRequest() {
+//		// Set up
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+//		HttpEntity<Void> request = new HttpEntity<>()
+//
+//		// Execution
+//		ResponseEntity<Automobile> response = testRestTemplate.postForEntity("/api/autos", request, Automobile.class);
+//
+//		// Assertions
+//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+//	}
 
 	// Test for no auto found for update
 
 	// Test for no auto found for delete
+	@Test
+	void deleteAutoByVin_notFound_returnsNoContent() {
+		// Set up
+		String vin = "ZIPPYDODA";
 
+		// Execution
+		ResponseEntity<Void> response = testRestTemplate.exchange(String.format("/api/autos/%s", vin), HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+	}
 
 
 }
