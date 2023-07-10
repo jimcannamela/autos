@@ -61,18 +61,9 @@ public class AutosService {
 		return autosRepository.findByVin(vin).orElse(null);
 	}
 
-	public Automobile updateAuto(String vin, String color, String owner) {
-		Optional<Automobile> optionalAutomobile = autosRepository.findByVin(vin);
-		if (optionalAutomobile.isPresent()) {
-			optionalAutomobile.get().setColor(color);
-			optionalAutomobile.get().setOwner(owner);
-			return autosRepository.save(optionalAutomobile.get());
-		}
-		return null;
-	}
-
-//	public Automobile updatePeteAuto(String vin, UpdateOwnerRequest infoToUpdate) {
-//		Automobile automobileToUpdate = autosRepository.findByVin(vin);
+	// Rob's version
+//	public Automobile updateAuto(String vin, String color, String owner) {
+//		Optional<Automobile> optionalAutomobile = autosRepository.findByVin(vin);
 //		if (optionalAutomobile.isPresent()) {
 //			optionalAutomobile.get().setColor(color);
 //			optionalAutomobile.get().setOwner(owner);
@@ -80,6 +71,18 @@ public class AutosService {
 //		}
 //		return null;
 //	}
+	public Automobile updateAuto(String vin, String color, String owner) throws AutoNotFoundException, InvalidAutoException{
+		if(null == vin || (null == color && null == owner)) throw new InvalidAutoException();
+
+		Optional<Automobile> auto = autosRepository.findByVin(vin);
+
+		if(null == auto || auto.isEmpty()) throw new AutoNotFoundException();
+
+		auto.get().setColor(color);
+		auto.get().setOwner(owner);
+		return autosRepository.save(auto.get());
+
+	}
 
 	public void deleteAuto(String vin) {
 		Optional<Automobile> optionalAutomobile = autosRepository.findByVin(vin);
