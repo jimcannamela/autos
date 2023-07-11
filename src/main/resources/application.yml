@@ -1,0 +1,30 @@
+# Environment Variable Defaults (Comment out or remove before checkin)
+DB_HOST: localhost
+DB_PORT: 5432
+DB_NAME: autos_db
+DB_USER: autos_user
+DB_PASSWORD: autos_password
+
+spring:
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    hibernate:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+  #    show-sql: true
+  #    properties:
+  #      hibernate:
+  #        format_sql: true
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  #logging:
+  #  level:
+  #    org:
+  #      hibernate:
+  #        SQL: DEBUG
+  #        type:
+  #          descriptor:
+  #            sql:
+  #              BasicBinder: trace
