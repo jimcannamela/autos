@@ -1,5 +1,6 @@
 package com.galvanize.autos;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.AfterEach;
@@ -170,24 +171,35 @@ class AutosApiApplicationTests {
 		System.out.println(response.getBody());
 	}
 
-//	@Test
-//	void patchAutoBVin_update_returnsAutomobile() {
-	// get a vin
-	// retrieve the automobile for that vin
-	// put the automobile?
-//		// Set up
-//		int seq = r.nextInt(50);
-//		String vin = testAutos.get(seq).getVin();
-//		System.out.println("Vin to search: "+vin);
-//
-//		// Execution
-//		ResponseEntity<Automobile> response = testRestTemplate.patchForObject(String.format("/api/autos/%s", vin), Automobile.class);
-//
-//		// Assertions
-//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//		assertThat(response.getBody()).isNotNull();
-//		System.out.println(response.getBody());
-//	}
+	@Test
+	void patchAutoBVin_update_returnsAutomobile() {
+
+		// Set up
+		int seq = r.nextInt(50);
+		String vin = testAutos.get(seq).getVin();
+		System.out.println("Vin to update: "+vin);
+
+		UpdateOwnerRequest updateOwnerRequest = new UpdateOwnerRequest();
+		updateOwnerRequest.setColor("Hot Pink");
+		updateOwnerRequest.setOwner("Pink Panther");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+		HttpEntity<UpdateOwnerRequest> request = new HttpEntity<>(updateOwnerRequest, headers);
+
+		Automobile automobile = new Automobile();
+
+		// Execution
+		ResponseEntity<Automobile> response = testRestTemplate.exchange("/api/autos/"+vin, HttpMethod.PATCH, request, Automobile.class );
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response).isNotNull();
+		assertThat(response.getBody().getColor()).isEqualTo("Hot Pink");
+		assertThat(response.getBody().getOwner()).isEqualTo("Pink Panther");
+		System.out.println(response);
+	}
+
 
 	@Test
 	void deleteAutoByVin_returnsAccepted() {
@@ -209,62 +221,61 @@ class AutosApiApplicationTests {
 	//
 
 	// Test for no autos in inventory
-//	@Test
-//	void getAutos_noAutosInInventory_returns404 (){
-//		// Set up
-//		autosRepository.deleteAll();
-//		System.out.println("Deleted all autos");
-//		// Execution
-//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity( "/api/autos", AutosList.class);
-//		System.out.println("Performed the call");
-//		// Assertions
-//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//		assertThat(response.getBody()).isNull();
-//		assertThat(response.getBody().isEmpty()).isTrue();
-//	}
-//	// Test for no autos returned by search for color and make
-//	@Test
-//	void getAutosByColorAndMake_noMatches_returnsNotFound() {
-//		// Set up
-//		String color = "Magenta";
-//		String make = "Ford";
-//
-//		// Execution
-//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
-//				String.format("/api/autos?color=%s&make=%s", color, make), AutosList.class);
-//
-//		// Assertions
-//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//		assertThat(response.getBody().isEmpty()).isTrue();
-//	}
-//	// Test for no autos returned by search for color
-//	@Test
-//	void getAutosByColor_noMatches_returnsNotFound() {
-//		// Set up
-//		String color = "Magenta";
-//
-//		// Execution
-//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
-//				String.format("/api/autos?color=%s", color), AutosList.class);
-//
-//		// Assertions
-//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//		assertThat(response.getBody().isEmpty()).isTrue();
-//	}
+	@Test
+	void getAutos_noAutosInInventory_returnsNoContent (){
+		// Set up
+		autosRepository.deleteAll();
+		System.out.println("Deleted all autos");
+		// Execution
+		ResponseEntity<AutosList> response = testRestTemplate.getForEntity( "/api/autos", AutosList.class);
+		System.out.println("Performed the call");
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+		assertThat(response.getBody()).isNull();
+	}
+	// Test for no autos returned by search for color and make
+	@Test
+	void getAutosByColorAndMake_noMatches_returnsNoContent() {
+		// Set up
+		String color = "Magenta";
+		String make = "Ford";
+
+		// Execution
+		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
+				String.format("/api/autos?color=%s&make=%s", color, make), AutosList.class);
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+		assertThat(response.getBody()).isNull();
+	}
+	// Test for no autos returned by search for color
+	@Test
+	void getAutosByColor_noMatches_returnsNoContent() {
+		// Set up
+		String color = "Magenta";
+
+		// Execution
+		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
+				String.format("/api/autos?color=%s", color), AutosList.class);
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+		assertThat(response.getBody()).isNull();
+	}
 	// Test for no autos returned by search for make
-//	@Test
-//	void getAutosByMake_noMatches_returnsNotFound() {
-//		// Set up
-//		String make = "Ford";
-//
-//		// Execution
-//		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
-//				String.format("/api/autos?make=%s", make), AutosList.class);
-//
-//		// Assertions
-//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//		assertThat(response.getBody().isEmpty()).isTrue();
-//	}
+	@Test
+	void getAutosByMake_noMatches_returnsNoContent() {
+		// Set up
+		String make = "Ford";
+
+		// Execution
+		ResponseEntity<AutosList> response = testRestTemplate.getForEntity(
+				String.format("/api/autos?make=%s", make), AutosList.class);
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+		assertThat(response.getBody()).isNull();
+	}
 	// Test for no auto found by search by vin
 	@Test
 	void getAutosByVin_noMatches_returnsNoContent() {
@@ -280,22 +291,52 @@ class AutosApiApplicationTests {
 		assertThat(response.getBody()).isNull();
 	}
 	// Test for bad request on add
-//	@Test
-//	void addAutoBad_returnsBadRequest() {
-//		// Set up
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-//		HttpEntity<Void> request = new HttpEntity<>()
-//
-//		// Execution
-//		ResponseEntity<Automobile> response = testRestTemplate.postForEntity("/api/autos", request, Automobile.class);
-//
-//		// Assertions
-//		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-//	}
+	@Test
+	void addAutoBad_returnsBadRequest() {
+		// Set up
+
+		// Execution
+		ResponseEntity<Void> response = testRestTemplate.exchange("/api/autos", HttpMethod.POST, HttpEntity.EMPTY, Void.class);
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
 
 	// Test for no auto found for update
+	@Test
+	void patchAutoByVin_notFound_returnsNotFound() {
+		// Set up
+		String vin = "ZIPPYDODA";
 
+		UpdateOwnerRequest updateOwnerRequest = new UpdateOwnerRequest();
+		updateOwnerRequest.setColor("Hot Pink");
+		updateOwnerRequest.setOwner("Pink Panther");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+		HttpEntity<UpdateOwnerRequest> request = new HttpEntity<>(updateOwnerRequest, headers);
+
+		Automobile automobile = new Automobile();
+
+		// Execution
+		ResponseEntity<Automobile> response = testRestTemplate.exchange("/api/autos/"+vin, HttpMethod.PATCH, request, Automobile.class );
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		System.out.println(response);
+	}
+	// Test for bad request for update
+	@Test
+	void patchAutoByVin_Bad_returnsBadRequest() {
+		// Set up
+		String vin = "ZIPPYDODA";
+
+		// Execution
+		ResponseEntity<Void> response = testRestTemplate.exchange(String.format("/api/autos/%s", vin), HttpMethod.PATCH, HttpEntity.EMPTY, Void.class);
+
+		// Assertions
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
 	// Test for no auto found for delete
 	@Test
 	void deleteAutoByVin_notFound_returnsNoContent() {

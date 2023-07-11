@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/autos")
 public class AutosController {
@@ -19,6 +21,7 @@ public class AutosController {
 											  @RequestParam(required = false) String make){
 		AutosList autosList;
 		if (color == null && make == null) {
+			System.out.println("Getting Autos");
 			autosList = autosService.getAutos();
 		} else if (make == null) {
 			autosList = autosService.getAutosWithColor(color);
@@ -27,8 +30,8 @@ public class AutosController {
 		} else {
 			autosList = autosService.getAutos(color, make);
 		}
-
-		return autosList.isEmpty() ? ResponseEntity.noContent().build() :
+		System.out.println(autosList);
+		return Objects.isNull(autosList) || autosList.isEmpty() ? ResponseEntity.noContent().build() :
 				ResponseEntity.ok(autosList);
 	}
 
