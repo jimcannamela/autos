@@ -83,14 +83,24 @@ public class Automobile {
 		this.vin = vin;
 	}
 
+	public Date getPurchaseDate() {
+		return purchaseDate;
+	}
+
+	public void setPurchaseDate(Date purchaseDate) {
+		this.purchaseDate = purchaseDate;
+	}
+
 	@Override
 	public String toString() {
 		return "Automobile{" +
-				"year=" + year +
+				"id=" + id +
+				", year=" + year +
 				", make='" + make + '\'' +
 				", model='" + model + '\'' +
 				", color='" + color + '\'' +
 				", owner='" + owner + '\'' +
+				", purchaseDate=" + purchaseDate +
 				", vin='" + vin + '\'' +
 				'}';
 	}
@@ -98,13 +108,13 @@ public class Automobile {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (!(o instanceof Automobile)) return false;
 		Automobile that = (Automobile) o;
-		return year == that.year && Objects.equals(make, that.make) && Objects.equals(model, that.model) && Objects.equals(color, that.color) && Objects.equals(owner, that.owner) && Objects.equals(vin, that.vin);
+		return getYear() == that.getYear() && Objects.equals(id, that.id) && Objects.equals(getMake(), that.getMake()) && Objects.equals(getModel(), that.getModel()) && Objects.equals(getColor(), that.getColor()) && Objects.equals(getOwner(), that.getOwner()) && Objects.equals(getPurchaseDate(), that.getPurchaseDate()) && Objects.equals(getVin(), that.getVin());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(year, make, model, color, owner, vin);
+		return Objects.hash(id, getYear(), getMake(), getModel(), getColor(), getOwner(), getPurchaseDate(), getVin());
 	}
 }
