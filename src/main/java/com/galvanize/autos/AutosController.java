@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/autos")
 public class AutosController {
@@ -41,7 +42,7 @@ public class AutosController {
 		automobile = autosService.getAuto(vin);
 		return automobile == null ? ResponseEntity.noContent().build() :
 				ResponseEntity.ok(automobile);
-	};
+	}
 
 	@PostMapping("")
 	public ResponseEntity<Automobile> addAuto(@RequestBody Automobile newAutomobile) {

@@ -1,9 +1,9 @@
 # Environment Variable Defaults (Comment out or remove before checkin)
-DB_HOST: localhost
-DB_PORT: 5432
-DB_NAME: autos_db
-DB_USER: autos_user
-DB_PASSWORD: autos_password
+#DB_HOST: localhost
+#DB_PORT: 5432
+#DB_NAME: autos_db
+#DB_USER: autos_user
+#DB_PASSWORD: autos_password
 
 spring:
   jpa:
