@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: autos-config
+data:
+    DB_HOST: 'localhost'
+    DB_PORT: '5432'
+    DB_NAME: 'autos_db'
+    DB_USER: 'autos_user'

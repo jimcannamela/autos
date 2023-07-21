@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jimc-simple-autos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jimc-simple-autos
+  template:
+    metadata:
+      labels:
+        app: jimc-simple-autos
+    spec:
+      containers:
+        - name: jimc-db-secret
+          image: jimmydacee/api-autos-image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  name: jimc-db-secret
+                  key: SPRING_PROFILES_ACTIVE
+            - name: SPRING_DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: jimc-db-secret
+                  key: SPRING_DATABASE_HOST
+            - name: SPRING_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: jimc-db-secret
+                  key: SPRING_DATABASE_USER
+            - name: SPRING_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: jimc-db-secret
+                  key: SPRING_DATABASE_NAME
+            - name: SPRING_DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: jimc-db-secret
+                  key: SPRING_DATABASE_PORT
+            - name: SPRING_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jimc-db-secret
+                  key: SPRING_DATABASE_PASSWORD

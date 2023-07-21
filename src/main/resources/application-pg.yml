@@ -1,0 +1,17 @@
+# application-pg.yml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    properties:
+      hibernate:
+        default_schema: jac_simple_autos
+  sql:
+    init:
+      mode: always
+      platform: postgresql # this needs to match the `schema-postgresql.sql` file.
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATABASE_HOST}:${SPRING_DATABASE_PORT}/${SPRING_DATABASE_NAME}
+    username: ${SPRING_DATABASE_USER}
+    password: ${SPRING_DATABASE_PASSWORD}
